@@ -10,7 +10,4 @@ repository = "https://github.com/RustForWeb/leptos-utils"
 version = "0.0.2"
 
 [workspace.dependencies]
-leptos = "0.7.0-rc1"
-
-[patch.crates-io]
-leptos = { git = "https://github.com/leptos-rs/leptos" }
+leptos = "0.7.0"
