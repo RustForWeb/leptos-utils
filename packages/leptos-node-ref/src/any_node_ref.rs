@@ -1,7 +1,7 @@
 use leptos::{
     prelude::{
         guards::{Derefable, ReadGuard},
-        DefinedAt, ReadUntracked, RwSignal, Set, Track,
+        DefinedAt, ReadUntracked, RwSignal, Get, Set, Track, NodeRef
     },
     tachys::{html::node_ref::NodeRefContainer, renderer::types::Element},
 };
@@ -12,7 +12,7 @@ use send_wrapper::SendWrapper;
 pub struct AnyNodeRef(RwSignal<Option<SendWrapper<Element>>>);
 
 impl AnyNodeRef {
-    /// Creates a new node reference.
+    /// Creates a new `AnyNodeRef`.
     #[track_caller]
     pub fn new() -> Self {
         Self(RwSignal::new(None))
@@ -55,6 +55,16 @@ impl Track for AnyNodeRef {
     }
 }
 
+pub trait ToAnyNodeRef {
+    /// Converts `self` into an `AnyNodeRef`.
+    ///
+    /// # Returns
+    ///
+    /// An `AnyNodeRef` that encapsulates the specific node reference in a type-erased manner,
+    /// enabling generic operations and composition.
+    fn to_any(self) -> AnyNodeRef;
+}
+
 macro_rules! impl_html_any_node_ref {
     ($($element:ident),*,) => {
         $(impl NodeRefContainer<leptos::html::$element> for AnyNodeRef {
@@ -62,6 +72,15 @@ macro_rules! impl_html_any_node_ref {
                 // safe to construct SendWrapper here, because it will only run in the browser
                 // so it will always be accessed or dropped from the main thread
                 self.0.set(Some(SendWrapper::new(el.clone())));
+            }
+        }
+        impl ToAnyNodeRef for NodeRef<leptos::html::$element> {
+            fn to_any(self) -> AnyNodeRef {
+                let any_ref = AnyNodeRef::new();
+                if let Some(element) = self.get() {
+                    NodeRefContainer::<leptos::html::$element>::load(any_ref, &element);
+                }
+                any_ref
             }
         })*
     };
@@ -75,6 +94,15 @@ macro_rules! impl_math_any_node_ref {
                 // so it will always be accessed or dropped from the main thread
                 self.0.set(Some(SendWrapper::new(el.clone())));
             }
+        }
+        impl ToAnyNodeRef for NodeRef<leptos::math::$element> {
+            fn to_any(self) -> AnyNodeRef {
+                let any_ref = AnyNodeRef::new();
+                if let Some(element) = self.get() {
+                    NodeRefContainer::<leptos::math::$element>::load(any_ref, &element);
+                }
+                any_ref
+            }
         })*
     };
 }
@@ -87,8 +115,24 @@ macro_rules! impl_svg_any_node_ref {
                 // so it will always be accessed or dropped from the main thread
                 self.0.set(Some(SendWrapper::new(el.clone())));
             }
+        }
+        impl ToAnyNodeRef for NodeRef<leptos::svg::$element> {
+            fn to_any(self) -> AnyNodeRef {
+                let any_ref = AnyNodeRef::new();
+                if let Some(element) = self.get() {
+                    NodeRefContainer::<leptos::svg::$element>::load(any_ref, &element);
+                }
+                any_ref
+            }
         })*
     };
+}
+
+// Implement `ToAnyNodeRef` for `AnyNodeRef` itself.
+impl ToAnyNodeRef for AnyNodeRef {
+    fn to_any(self) -> AnyNodeRef {
+        self
+    }
 }
 
 impl_html_any_node_ref!(
