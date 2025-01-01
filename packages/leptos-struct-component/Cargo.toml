@@ -10,7 +10,7 @@ version.workspace = true
 
 [dependencies]
 leptos.workspace = true
-leptos-struct-component-macro = { path = "../leptos-struct-component-macro", version = "0.0.3" }
+leptos-struct-component-macro.workspace = true
 
 [dev-dependencies]
-leptos-node-ref = { path = "../leptos-node-ref" }
+leptos-node-ref.workspace = true
