@@ -4,7 +4,7 @@ use std::{
 };
 
 use indexmap::IndexMap;
-use leptos::tachys::html::style::IntoStyle;
+use leptos::{ attr::IntoAttributeValue, tachys::html::style::IntoStyle};
 
 fn style_map_to_string(map: &IndexMap<String, Option<String>>) -> String {
     map.iter()
@@ -93,6 +93,16 @@ impl Display for Style {
         )
     }
 }
+
+
+impl IntoAttributeValue for Style {
+    type Output = String;
+
+    fn into_attribute_value(self) -> Self::Output {
+        self.to_string()
+    }
+}
+
 
 impl From<Option<&str>> for Style {
     fn from(value: Option<&str>) -> Style {
@@ -331,5 +341,12 @@ mod tests {
             Style::from([("color", None::<String>)]),
             Style::from([("color", None::<String>)]).with_defaults([("color", None::<String>)]),
         );
+    }
+
+    #[test]
+    fn test_into_attribute_value(){
+        let style = Style::from("color: red; background-color: blue;"); 
+        let attr_value: String = style.into_attribute_value(); 
+        assert_eq!(attr_value, "color: red; background-color: blue;");
     }
 }
