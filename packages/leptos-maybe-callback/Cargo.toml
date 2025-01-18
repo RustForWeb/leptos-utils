@@ -1,0 +1,11 @@
+[package]
+name = "leptos-maybe-callback"
+description = "Zero-cost, type-safe optional callbacks for Leptos with flexible event handling"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+leptos.workspace = true
