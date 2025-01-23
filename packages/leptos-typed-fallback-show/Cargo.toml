@@ -1,0 +1,11 @@
+[package]
+name = "leptos-typed-fallback-show"
+description = "A type-safe Show component for Leptos with fully typed fallback support"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+leptos.workspace = true
