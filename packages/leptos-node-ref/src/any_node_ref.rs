@@ -1,9 +1,15 @@
+use std::marker::PhantomData;
 use leptos::{
+    attr::{Attribute, NextAttribute},
+    html::ElementType,
     prelude::{
         guards::{Derefable, ReadGuard},
-        DefinedAt, ReadUntracked, RwSignal, Set, Track,
+        DefinedAt, Get, NodeRef, ReadUntracked, RwSignal, Set, Track,
     },
-    tachys::{html::node_ref::NodeRefContainer, renderer::types::Element},
+    tachys::{
+        html::node_ref::NodeRefContainer,
+        renderer::types::Element,
+    },
 };
 use send_wrapper::SendWrapper;
 
@@ -12,7 +18,7 @@ use send_wrapper::SendWrapper;
 pub struct AnyNodeRef(RwSignal<Option<SendWrapper<Element>>>);
 
 impl AnyNodeRef {
-    /// Creates a new node reference.
+    /// Creates a new `AnyNodeRef`.
     #[track_caller]
     pub fn new() -> Self {
         Self(RwSignal::new(None))
@@ -55,151 +61,157 @@ impl Track for AnyNodeRef {
     }
 }
 
-macro_rules! impl_html_any_node_ref {
-    ($($element:ident),*,) => {
-        $(impl NodeRefContainer<leptos::html::$element> for AnyNodeRef {
-            fn load(self, el: &Element) {
-                // safe to construct SendWrapper here, because it will only run in the browser
-                // so it will always be accessed or dropped from the main thread
-                self.0.set(Some(SendWrapper::new(el.clone())));
-            }
-        })*
-    };
+/// Allows converting any node reference into our type-erased `AnyNodeRef`.
+pub trait IntoAnyNodeRef {
+    /// Converts `self` into an `AnyNodeRef`.
+    fn into_any(self) -> AnyNodeRef;
 }
 
-macro_rules! impl_math_any_node_ref {
-    ($($element:ident),*,) => {
-        $(impl NodeRefContainer<leptos::math::$element> for AnyNodeRef {
-            fn load(self, el: &Element) {
-                // safe to construct SendWrapper here, because it will only run in the browser
-                // so it will always be accessed or dropped from the main thread
-                self.0.set(Some(SendWrapper::new(el.clone())));
-            }
-        })*
-    };
+impl<E: ElementType> NodeRefContainer<E> for AnyNodeRef {
+    fn load(self, el: &Element) {
+        self.0.set(Some(SendWrapper::new(el.clone())));
+    }
 }
 
-macro_rules! impl_svg_any_node_ref {
-    ($($element:ident),*,) => {
-        $(impl NodeRefContainer<leptos::svg::$element> for AnyNodeRef {
-            fn load(self, el: &Element) {
-                // safe to construct SendWrapper here, because it will only run in the browser
-                // so it will always be accessed or dropped from the main thread
-                self.0.set(Some(SendWrapper::new(el.clone())));
-            }
-        })*
-    };
+impl<E> IntoAnyNodeRef for NodeRef<E>
+where
+    E: ElementType,
+    E::Output: AsRef<Element>,
+    NodeRef<E>: Get<Value = Option<E::Output>>,
+{
+    fn into_any(self) -> AnyNodeRef {
+        let any_ref = AnyNodeRef::new();
+        if let Some(element) = self.get() {
+            NodeRefContainer::<E>::load(any_ref, element.as_ref());
+        }
+        any_ref
+    }
 }
 
-impl_html_any_node_ref!(
-    A, Abbr, Address, Area, Article, Aside, Audio, B, Base, Bdi, Bdo, Blockquote, Body, Br, Button,
-    Canvas, Caption, Cite, Code, Col, Colgroup, Data, Datalist, Dd, Del, Details, Dfn, Dialog, Div,
-    Dl, Dt, Em, Embed, Fieldset, Figcaption, Figure, Footer, Form, H1, H2, H3, H4, H5, H6, Head,
-    Header, Hgroup, Hr, Html, I, Iframe, Img, Input, Ins, Kbd, Label, Legend, Li, Link, Main, Map,
-    Mark, Menu, Meta, Meter, Nav, Noscript, Object, Ol, Optgroup, Option_, Output, P, Picture,
-    Portal, Pre, Progress, Q, Rp, Rt, Ruby, S, Samp, Script, Search, Section, Select, Slot, Small,
-    Source, Span, Strong, Style, Sub, Summary, Sup, Table, Tbody, Td, Template, Textarea, Tfoot,
-    Th, Thead, Time, Title, Tr, Track, U, Ul, Var, Video, Wbr,
-);
+impl IntoAnyNodeRef for AnyNodeRef {
+    fn into_any(self) -> AnyNodeRef {
+        self
+    }
+}
 
-impl_math_any_node_ref!(
-    Math,
-    Mi,
-    Mn,
-    Mo,
-    Ms,
-    Mspace,
-    Mtext,
-    Menclose,
-    Merror,
-    Mfenced,
-    Mfrac,
-    Mpadded,
-    Mphantom,
-    Mroot,
-    Mrow,
-    Msqrt,
-    Mstyle,
-    Mmultiscripts,
-    Mover,
-    Mprescripts,
-    Msub,
-    Msubsup,
-    Msup,
-    Munder,
-    Munderover,
-    Mtable,
-    Mtd,
-    Mtr,
-    Maction,
-    Annotation,
-    Semantics,
-);
+impl<T: ElementType> From<NodeRef<T>> for AnyNodeRef
+where
+    NodeRef<T>: IntoAnyNodeRef,
+{
+    fn from(value: NodeRef<T>) -> Self {
+        value.into_any()
+    }
+}
 
-impl_svg_any_node_ref!(
-    A,
-    Animate,
-    AnimateMotion,
-    AnimateTransform,
-    Circle,
-    ClipPath,
-    Defs,
-    Desc,
-    Discard,
-    Ellipse,
-    FeBlend,
-    FeColorMatrix,
-    FeComponentTransfer,
-    FeComposite,
-    FeConvolveMatrix,
-    FeDiffuseLighting,
-    FeDisplacementMap,
-    FeDistantLight,
-    FeDropShadow,
-    FeFlood,
-    FeFuncA,
-    FeFuncB,
-    FeFuncG,
-    FeFuncR,
-    FeGaussianBlur,
-    FeImage,
-    FeMerge,
-    FeMergeNode,
-    FeMorphology,
-    FeOffset,
-    FePointLight,
-    FeSpecularLighting,
-    FeSpotLight,
-    FeTile,
-    FeTurbulence,
-    Filter,
-    ForeignObject,
-    G,
-    Hatch,
-    Hatchpath,
-    Image,
-    Line,
-    LinearGradient,
-    Marker,
-    Mask,
-    Metadata,
-    Mpath,
-    Path,
-    Pattern,
-    Polygon,
-    Polyline,
-    RadialGradient,
-    Rect,
-    Script,
-    Set,
-    Stop,
-    Style,
-    Svg,
-    Switch,
-    Symbol,
-    Text,
-    TextPath,
-    Title,
-    Tspan,
-    View,
-);
+/// Attribute wrapper for node refs that allows conditional rendering across elements.
+///
+/// Useful when distributing node refs across multiple rendering branches.
+#[derive(Debug)]
+pub struct AnyNodeRefAttr<E, C> {
+    container: C,
+    ty: PhantomData<E>,
+}
+
+impl<E, C> Clone for AnyNodeRefAttr<E, C>
+where
+    C: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            container: self.container.clone(),
+            ty: PhantomData,
+        }
+    }
+}
+
+impl<E, C> Attribute for AnyNodeRefAttr<E, C>
+where
+    E: ElementType + 'static,
+    C: NodeRefContainer<E> + Clone + 'static,
+    Element: PartialEq,
+{
+    const MIN_LENGTH: usize = 0;
+    type State = Element;
+    type AsyncOutput = Self;
+    type Cloneable = Self;
+    type CloneableOwned = Self;
+
+    #[inline(always)]
+    fn html_len(&self) -> usize {
+        0
+    }
+
+    fn to_html(
+        self,
+        _buf: &mut String,
+        _class: &mut String,
+        _style: &mut String,
+        _inner_html: &mut String,
+    ) {
+    }
+
+    fn hydrate<const FROM_SERVER: bool>(self, el: &Element) -> Self::State {
+        self.container.load(el);
+        el.clone()
+    }
+
+    fn build(self, el: &Element) -> Self::State {
+        self.container.load(el);
+        el.clone()
+    }
+
+    fn rebuild(self, state: &mut Self::State) {
+        self.container.load(state);
+    }
+
+    fn into_cloneable(self) -> Self::Cloneable {
+        self
+    }
+
+    fn into_cloneable_owned(self) -> Self::CloneableOwned {
+        self
+    }
+
+    fn dry_resolve(&mut self) {}
+
+    async fn resolve(self) -> Self::AsyncOutput {
+        self
+    }
+}
+
+impl<E, C> NextAttribute for AnyNodeRefAttr<E, C>
+where
+    E: ElementType + 'static,
+    C: NodeRefContainer<E> + Clone + 'static,
+    Element: PartialEq,
+{
+    type Output<NewAttr: Attribute> = (Self, NewAttr);
+
+    fn add_any_attr<NewAttr: Attribute>(
+        self,
+        new_attr: NewAttr,
+    ) -> Self::Output<NewAttr> {
+        (self, new_attr)
+    }
+}
+
+/// Constructs an attribute to attach an `AnyNodeRef` to an element.
+///
+/// Enables adding node refs in conditional/dynamic rendering branches.
+pub fn any_node_ref<E, C>(container: C) -> AnyNodeRefAttr<E, C>
+where
+    E: ElementType,
+    C: NodeRefContainer<E>,
+{
+    AnyNodeRefAttr {
+        container,
+        ty: PhantomData,
+    }
+}
+
+pub mod prelude {
+    pub use super::*;
+    pub use AnyNodeRef;
+    pub use IntoAnyNodeRef;
+    pub use any_node_ref;
+}
