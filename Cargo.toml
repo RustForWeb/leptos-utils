@@ -11,4 +11,5 @@ version = "0.1.0"
 
 [workspace.dependencies]
 leptos = "0.7.0"
+leptos-struct-component-macro = { path = "packages/leptos-struct-component-macro", version = "0.1.0" }
 log = "0.4.25"
