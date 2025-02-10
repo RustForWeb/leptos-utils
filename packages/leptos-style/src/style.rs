@@ -94,14 +94,6 @@ impl Display for Style {
     }
 }
 
-impl IntoAttributeValue for Style {
-    type Output = String;
-
-    fn into_attribute_value(self) -> Self::Output {
-        self.to_string()
-    }
-}
-
 impl From<Option<&str>> for Style {
     fn from(value: Option<&str>) -> Style {
         Style(value.map(|value| InnerStyle::String(value.to_string())))
@@ -186,6 +178,14 @@ impl<const N: usize> From<[(String, String); N]> for Style {
         Style(Some(InnerStyle::Structured(IndexMap::from_iter(
             value.map(|(key, value)| (key, Some(value))),
         ))))
+    }
+}
+
+impl IntoAttributeValue for Style {
+    type Output = String;
+
+    fn into_attribute_value(self) -> Self::Output {
+        self.to_string()
     }
 }
 
@@ -343,8 +343,14 @@ mod tests {
 
     #[test]
     fn test_into_attribute_value() {
-        let style = Style::from("color: red; background-color: blue;");
-        let attr_value: String = style.into_attribute_value();
-        assert_eq!(attr_value, "color: red; background-color: blue;");
+        assert_eq!(
+            Style::from("color: red; background-color: blue;").into_attribute_value(),
+            "color: red; background-color: blue;"
+        );
+
+        assert_eq!(
+            Style::from([("color", "red"), ("background-color", "blue")]).into_attribute_value(),
+            "color: red; background-color: blue;"
+        );
     }
 }
