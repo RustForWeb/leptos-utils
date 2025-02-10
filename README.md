@@ -11,6 +11,7 @@ Documentation for the crates is available on [Docs.rs](https://docs.rs/):
 -   [`leptos-struct-component`](https://docs.rs/leptos-struct-component/latest/leptos_struct_component/)
 -   [`leptos-struct-component-macro`](https://docs.rs/leptos-struct-component-macro/latest/leptos_struct_component_macro/)
 -   [`leptos-style`](https://docs.rs/leptos-style/latest/leptos_style/)
+-   [`leptos-typed-fallback-show`](https://docs.rs/leptos-typed-fallback-show/latest/leptos_typed_fallback_show/)
 
 ## License
 

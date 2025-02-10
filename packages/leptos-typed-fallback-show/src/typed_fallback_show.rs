@@ -1,12 +1,13 @@
 use leptos::{either::Either, prelude::*};
 
-/// We need our own show instead of leptos' Show because attribute spreading does not work
-/// across AnyView as of 0.7.2, which is required here.
+/// A `Show` component with typed fallback support.
 #[component]
-#[allow(non_snake_case)]
 pub fn TypedFallbackShow<F, IV, W, C>(
+    /// The children will be shown whenever the condition in the `when` closure returns `true`.
     children: TypedChildrenFn<C>,
+    /// A closure that returns a bool that determines whether this thing runs
     when: W,
+    /// A closure that returns what gets rendered if the when statement is false. By default this is the empty view.
     fallback: F,
 ) -> impl IntoView
 where

@@ -1,6 +1,6 @@
 [package]
 name = "leptos-typed-fallback-show"
-description = "A type-safe Show component for Leptos with fully typed fallback support"
+description = "A Show component for Leptos with typed fallback support."
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
