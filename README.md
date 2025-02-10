@@ -6,6 +6,7 @@ Utilities for [Leptos](https://leptos.dev/).
 
 Documentation for the crates is available on [Docs.rs](https://docs.rs/):
 
+-   [`leptos-maybe-callback`](https://docs.rs/leptos-maybe-callback/latest/leptos_maybe_callback/)
 -   [`leptos-node-ref`](https://docs.rs/leptos-node-ref/latest/leptos_node_ref/)
 -   [`leptos-struct-component`](https://docs.rs/leptos-struct-component/latest/leptos_struct_component/)
 -   [`leptos-struct-component-macro`](https://docs.rs/leptos-struct-component-macro/latest/leptos_struct_component_macro/)
