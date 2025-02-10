@@ -6,7 +6,7 @@ Optional callbacks for [Leptos](https://leptos.dev/).
 
 Documentation for the crate is available on [Docs.rs](https://docs.rs/):
 
--   [`leptos-node-ref`](https://docs.rs/leptos-maybe-callback/latest/leptos_maybe_callback/)
+-   [`leptos-maybe-callback`](https://docs.rs/leptos-maybe-callback/latest/leptos_maybe_callback/)
 
 ## Example
 
