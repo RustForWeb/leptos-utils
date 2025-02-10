@@ -11,3 +11,4 @@ version = "0.0.3"
 
 [workspace.dependencies]
 leptos = "0.7.0"
+log = "0.4.25"

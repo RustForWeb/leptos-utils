@@ -1,13 +1,17 @@
-use leptos::prelude::{Callback, Callable};
 use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::Arc;
+
+use leptos::prelude::{Callable, Callback};
 use leptos_maybe_callback::*;
 
 /// Tests the default value of `MaybeCallback`, expecting it to be `None`.
 #[test]
 fn test_default() {
     let maybe_callback: MaybeCallback<()> = Default::default();
-    assert!(maybe_callback.is_none(), "Expected MaybeCallback to be None by default.");
+    assert!(
+        maybe_callback.is_none(),
+        "Expected MaybeCallback to be None by default."
+    );
 }
 
 /// Tests creating a `MaybeCallback` from a `Some(Callback)`, expecting it to contain `Some`.
@@ -25,14 +29,20 @@ fn test_from_some_callback() {
 
     // Execute the callback to ensure it works
     maybe.run(true);
-    assert!(was_called.load(Ordering::SeqCst), "Callback was not called.");
+    assert!(
+        was_called.load(Ordering::SeqCst),
+        "Callback was not called."
+    );
 }
 
 /// Tests creating a `MaybeCallback` from `None`, expecting it to be `None`.
 #[test]
 fn test_from_none_callback() {
     let maybe: MaybeCallback<()> = MaybeCallback::from(None::<Callback<()>>);
-    assert!(maybe.is_none(), "Expected MaybeCallback to be None when initialized with None.");
+    assert!(
+        maybe.is_none(),
+        "Expected MaybeCallback to be None when initialized with None."
+    );
 }
 
 /// Tests the `run` method when `MaybeCallback` contains `Some(Callback)`.
@@ -82,9 +92,11 @@ fn test_map_some() {
     let maybe = MaybeCallback::from(Some(original_cb));
 
     // Map i32 -> &str
-    let new_maybe = maybe.map(|cb| Callback::new(move |_: &str| {
-        cb.run(42); // calls original callback
-    }));
+    let new_maybe = maybe.map(|cb| {
+        Callback::new(move |_: &str| {
+            cb.run(42); // calls original callback
+        })
+    });
 
     assert!(new_maybe.is_some(), "Mapped MaybeCallback should be Some.");
 
@@ -201,46 +213,4 @@ fn test_into_handler() {
     // Uncommenting the following lines should cause a compilation error.
     //
     // maybe.run(10); // Error: use of moved value: `maybe`
-}
-
-/// Tests the deprecated `generate_handler` function to ensure it still works as expected.
-#[test]
-#[allow(deprecated)]
-fn test_generate_handler() {
-    let counter = Arc::new(AtomicI32::new(0));
-    let counter_clone = Arc::clone(&counter);
-
-    let cb = Callback::new(move |val: i32| {
-        counter_clone.fetch_add(val, Ordering::SeqCst);
-    });
-
-    let mut handler = generate_handler(cb);
-    handler(10);
-    handler(5);
-    assert_eq!(
-        counter.load(Ordering::SeqCst),
-        15,
-        "Counter should have been incremented by 15 using generate_handler."
-    );
-}
-
-/// Tests the deprecated `Handler::from` method to ensure it still works as expected.
-#[test]
-#[allow(deprecated)]
-fn test_handler_from() {
-    let counter = Arc::new(AtomicI32::new(0));
-    let counter_clone = Arc::clone(&counter);
-
-    let cb = Callback::new(move |val: i32| {
-        counter_clone.fetch_add(val, Ordering::SeqCst);
-    });
-
-    let mut handler_fn = Handler::from(MaybeCallback::from(Some(cb)));
-    handler_fn(7);
-    handler_fn(3);
-    assert_eq!(
-        counter.load(Ordering::SeqCst),
-        10,
-        "Counter should have been incremented by 10 using Handler::from."
-    );
 }
