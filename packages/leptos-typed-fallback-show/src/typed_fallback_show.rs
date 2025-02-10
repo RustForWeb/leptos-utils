@@ -1,7 +1,4 @@
-use leptos::{
-    either::Either,
-    prelude::*,
-};
+use leptos::{either::Either, prelude::*};
 
 /// We need our own show instead of leptos' Show because attribute spreading does not work
 /// across AnyView as of 0.7.2, which is required here.

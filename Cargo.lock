@@ -758,6 +758,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "leptos-typed-fallback-show"
+version = "0.0.4"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
 name = "leptos_config"
 version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
