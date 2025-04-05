@@ -4,8 +4,8 @@ use leptos::{
     attr::{Attribute, NextAttribute},
     html::ElementType,
     prelude::{
-        guards::{Derefable, ReadGuard},
         DefinedAt, Get, NodeRef, ReadUntracked, RwSignal, Set, Track,
+        guards::{Derefable, ReadGuard},
     },
     tachys::{html::node_ref::NodeRefContainer, renderer::types::Element},
 };
@@ -206,9 +206,9 @@ where
 
 pub mod prelude {
     pub use super::*;
-    pub use any_node_ref;
     pub use AnyNodeRef;
     pub use IntoAnyNodeRef;
+    pub use any_node_ref;
 }
 
 #[cfg(test)]

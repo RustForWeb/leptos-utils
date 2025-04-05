@@ -2,7 +2,7 @@ use std::fmt::{self, Display};
 
 use leptos::{ev::MouseEvent, prelude::*};
 use leptos_node_ref::AnyNodeRef;
-use leptos_struct_component::{struct_component, StructComponent};
+use leptos_struct_component::{StructComponent, struct_component};
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum BoxAs {
