@@ -1,5 +1,5 @@
-use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 
 use leptos::prelude::{Callable, Callback};
 use leptos_maybe_callback::*;

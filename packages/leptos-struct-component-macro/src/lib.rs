@@ -5,8 +5,8 @@ extern crate proc_macro;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{
-    parse_macro_input, spanned::Spanned, AttrStyle, Attribute, Data, DeriveInput, Expr, ExprArray,
-    GenericArgument, Ident, LitBool, LitStr, Meta, PathArguments, Type,
+    AttrStyle, Attribute, Data, DeriveInput, Expr, ExprArray, GenericArgument, Ident, LitBool,
+    LitStr, Meta, PathArguments, Type, parse_macro_input, spanned::Spanned,
 };
 
 #[derive(Debug, Default)]
@@ -214,7 +214,7 @@ pub fn derive_struct_component(input: proc_macro::TokenStream) -> proc_macro::To
                     _ => {
                         return syn::Error::new(field.ty.span(), "expected type path")
                             .to_compile_error()
-                            .into()
+                            .into();
                     }
                 }
             }
