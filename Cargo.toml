@@ -7,9 +7,9 @@ authors = ["Rust For Web <info@rustforweb.org>"]
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/RustForWeb/leptos-utils"
-version = "0.1.0"
+version = "0.2.0"
 
 [workspace.dependencies]
 leptos = "0.8.0"
-leptos-struct-component-macro = { path = "packages/leptos-struct-component-macro", version = "0.1.0" }
+leptos-struct-component-macro = { path = "packages/leptos-struct-component-macro", version = "0.2.0" }
 log = "0.4.25"
