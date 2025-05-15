@@ -21,6 +21,13 @@ impl AnyNodeRef {
     pub fn new() -> Self {
         Self(RwSignal::new(None))
     }
+
+    /// Fills the container with the element.
+    ///
+    /// Type erased version of [`NodeRefContainer::load`].
+    pub fn load_any(self, el: &Element) {
+        self.0.set(Some(SendWrapper::new(el.clone())));
+    }
 }
 
 impl Default for AnyNodeRef {
