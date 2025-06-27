@@ -47,7 +47,7 @@ impl InnerStyle {
 impl Display for InnerStyle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::String(string) => write!(f, "{}", string),
+            Self::String(string) => write!(f, "{string}"),
             Self::Structured(map) => write!(f, "{}", style_map_to_string(map),),
         }
     }
