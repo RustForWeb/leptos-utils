@@ -114,7 +114,7 @@ fn test_map_none() {
     let maybe: MaybeCallback<i32> = MaybeCallback::from(None::<Callback<i32>>);
     let new_maybe = maybe.map(|_cb| {
         // This closure should never be called
-        Callback::new(|val: &str| println!("val: {}", val))
+        Callback::new(|val: &str| println!("val: {val}"))
     });
     assert!(
         new_maybe.is_none(),
