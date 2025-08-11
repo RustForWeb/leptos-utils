@@ -148,50 +148,50 @@ pub fn derive_struct_component(input: proc_macro::TokenStream) -> proc_macro::To
                     continue;
                 }
 
-                if ident.to_string().starts_with("on") {
-                    if let Type::Path(path) = &field.ty {
-                        let event = ident
-                            .to_string()
-                            .strip_prefix("on")
-                            .expect("String should start with `on`.")
-                            .parse::<TokenStream>()
-                            .expect("String should parse as TokenStream.");
+                if ident.to_string().starts_with("on")
+                    && let Type::Path(path) = &field.ty
+                {
+                    let event = ident
+                        .to_string()
+                        .strip_prefix("on")
+                        .expect("String should start with `on`.")
+                        .parse::<TokenStream>()
+                        .expect("String should parse as TokenStream.");
 
-                        let first = path.path.segments.first();
-                        let first_argument = first.and_then(|segment| match &segment.arguments {
-                            PathArguments::None => None,
-                            PathArguments::AngleBracketed(arguments) => {
-                                arguments.args.first().and_then(|arg| match arg {
-                                    GenericArgument::Type(Type::Path(path)) => {
-                                        path.path.segments.first()
-                                    }
-                                    _ => None,
-                                })
-                            }
-                            PathArguments::Parenthesized(_) => None,
+                    let first = path.path.segments.first();
+                    let first_argument = first.and_then(|segment| match &segment.arguments {
+                        PathArguments::None => None,
+                        PathArguments::AngleBracketed(arguments) => {
+                            arguments.args.first().and_then(|arg| match arg {
+                                GenericArgument::Type(Type::Path(path)) => {
+                                    path.path.segments.first()
+                                }
+                                _ => None,
+                            })
+                        }
+                        PathArguments::Parenthesized(_) => None,
+                    });
+
+                    if first.is_some_and(|segment| segment.ident == "Callback") {
+                        listeners.push(quote! {
+                            .on(::leptos::tachys::html::event::#event, move |event| {
+                                self.#ident.run(event);
+                            })
                         });
 
-                        if first.is_some_and(|segment| segment.ident == "Callback") {
-                            listeners.push(quote! {
-                                .on(::leptos::tachys::html::event::#event, move |event| {
-                                    self.#ident.run(event);
-                                })
-                            });
+                        continue;
+                    } else if first.is_some_and(|segment| segment.ident == "Option")
+                        && first_argument.is_some_and(|argument| argument.ident == "Callback")
+                    {
+                        listeners.push(quote! {
+                            .on(::leptos::tachys::html::event::#event, move |event| {
+                                if let Some(listener) = &self.#ident {
+                                    listener.run(event);
+                                }
+                            })
+                        });
 
-                            continue;
-                        } else if first.is_some_and(|segment| segment.ident == "Option")
-                            && first_argument.is_some_and(|argument| argument.ident == "Callback")
-                        {
-                            listeners.push(quote! {
-                                .on(::leptos::tachys::html::event::#event, move |event| {
-                                    if let Some(listener) = &self.#ident {
-                                        listener.run(event);
-                                    }
-                                })
-                            });
-
-                            continue;
-                        }
+                        continue;
                     }
                 }
 
@@ -287,9 +287,9 @@ pub fn derive_struct_component(input: proc_macro::TokenStream) -> proc_macro::To
             }
             .into()
         } else {
-            return syn::Error::new(derive_input.span(), "`#[struct_component(tag = \"\")] or #[struct_component(dynamic_tag = true)]` is required")
+            syn::Error::new(derive_input.span(), "`#[struct_component(tag = \"\")] or #[struct_component(dynamic_tag = true)]` is required")
                     .to_compile_error()
-                    .into();
+                    .into()
         }
     } else {
         syn::Error::new(derive_input.span(), "expected struct")
