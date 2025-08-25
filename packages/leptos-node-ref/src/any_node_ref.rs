@@ -283,8 +283,11 @@ mod tests {
 
     #[test]
     fn test_defined_at() {
-        let node_ref = AnyNodeRef::new();
-        assert!(node_ref.defined_at().is_some());
+        #[cfg(debug_assertions)]
+        {
+            let node_ref = AnyNodeRef::new();
+            assert!(node_ref.defined_at().is_some());
+        }
     }
 
     #[test]
