@@ -6,10 +6,10 @@ Node reference extras for [Leptos](https://leptos.dev/).
 
 Documentation for the crate is available on [Docs.rs](https://docs.rs/):
 
--   [`leptos-node-ref`](https://docs.rs/leptos-node-ref/latest/leptos_node_ref/)
+- [`leptos-node-ref`](https://docs.rs/leptos-node-ref/latest/leptos_node_ref/)
 
 ## Rust for Web
 
 The Leptos Node Ref project is part of [Rust for Web](https://github.com/RustForWeb).
 
-[Rust for Web](https://github.com/RustForWeb) creates and ports web UI libraries for Rust. All projects are free and open source.
+[Rust for Web](https://github.com/RustForWeb) creates and ports web libraries for Rust. All projects are free and open source.

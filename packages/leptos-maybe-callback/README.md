@@ -6,7 +6,7 @@ Optional callbacks for [Leptos](https://leptos.dev/).
 
 Documentation for the crate is available on [Docs.rs](https://docs.rs/):
 
--   [`leptos-maybe-callback`](https://docs.rs/leptos-maybe-callback/latest/leptos_maybe_callback/)
+- [`leptos-maybe-callback`](https://docs.rs/leptos-maybe-callback/latest/leptos_maybe_callback/)
 
 ## Example
 
@@ -101,4 +101,4 @@ pub fn ButtonWithoutCallback() -> impl IntoView {
 
 The Leptos Maybe Callback project is part of [Rust for Web](https://github.com/RustForWeb).
 
-[Rust for Web](https://github.com/RustForWeb) creates and ports web UI libraries for Rust. All projects are free and open source.
+[Rust for Web](https://github.com/RustForWeb) creates and ports web libraries for Rust. All projects are free and open source.
