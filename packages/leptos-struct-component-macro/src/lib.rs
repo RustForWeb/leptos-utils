@@ -63,14 +63,6 @@ fn parse_struct_component_attr(attr: &Attribute) -> Result<StructComponentAttrAr
     }
 }
 
-#[proc_macro_attribute]
-pub fn struct_component(
-    _attr: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
-    item
-}
-
 #[proc_macro_derive(StructComponent, attributes(struct_component))]
 pub fn derive_struct_component(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive_input = parse_macro_input!(input as DeriveInput);
