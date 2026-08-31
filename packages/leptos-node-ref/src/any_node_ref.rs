@@ -220,7 +220,7 @@ pub mod prelude {
 
 #[cfg(test)]
 mod tests {
-    use leptos::{html, prelude::*};
+    use leptos::html;
 
     use super::{any_node_ref, prelude::*};
 
